@@ -8,20 +8,30 @@ addEventListener('fetch', event => {
 var index;
 const COOKIE_NAME = 'variant'
 async function handleRequest(request) {
+  // Fetching URLs from the link
   const res = await fetch("https://cfw-takehome.developers.workers.dev/api/variants");
   const res_text = await res.text();
+  // Storing it the form of JSON
   const res_json = JSON.parse(res_text);  
+  /* Implementing Persistent variants. Checking if the user has already visited the page,
+     if yes the user will get same page again. Else a new random variant is assigned as it 
+     is the first time user is visiting the page
+  */
   const cookie = getCookie(request, COOKIE_NAME);
   let response;
   if (cookie) {
     response = await fetch(res_json['variants'][cookie]);
   }
   else {
+    /* Distributing requests in A/B testing style and
+       Returning each variant around 50% of the time and setting the cookie
+    */
     index = Math.random() > 0.5 ? 1 : 0;
     response = await fetch(res_json['variants'][index]);
     response = new Response(response.body, response);
     response.headers.set('Set-Cookie', `variant=${index}; Expires=Wed, 21 July 2020 07:28:00 GMT; path=/`)
   }
+  // Using HTMLRewritter to customize the page
   let response_final = rewriter.transform(response);
   return response_final;
 }
