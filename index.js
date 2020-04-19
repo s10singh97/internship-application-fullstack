@@ -5,7 +5,7 @@ addEventListener('fetch', event => {
  * @param {Request} request
  * @param {string} name
  */
-var index;
+var index, val;
 const COOKIE_NAME = 'variant'
 async function handleRequest(request) {
   // Fetching URLs from the link
@@ -33,6 +33,7 @@ async function handleRequest(request) {
     response.headers.set('Set-Cookie', `variant=${index}; Expires=Wed, 21 July 2020 07:28:00 GMT; path=/`)
   }
   // Using HTMLRewritter to customize the page
+  val = parseInt(index)+1;
   let response_final = rewriter.transform(response);
   return response_final;
 }
@@ -46,8 +47,8 @@ class ElementHandler
 }
 
 const rewriter = new HTMLRewriter()
-  .on('title', {element(element){element.setInnerContent(`Cloudflare Gaming Variant ${index+1}`);}})
-  .on('h1#title', {element(element){element.setInnerContent(`Welcome Cloudflare Gaming Variant ${index+1}`);}})
+  .on('title', {element(element){element.setInnerContent(`Cloudflare Gaming Variant ${val}`);}})
+  .on('h1#title', {element(element){element.setInnerContent(`Welcome Cloudflare Gaming Variant ${val}`);}})
   .on('p#description', {element(element){element.setInnerContent('This will redirect you to Cloudflare for Gaming');}})
   .on('a#url', new ElementHandler())
 
