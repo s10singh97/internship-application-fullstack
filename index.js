@@ -21,6 +21,7 @@ async function handleRequest(request) {
   let response;
   if (cookie) {
     response = await fetch(res_json['variants'][cookie]);
+    index = cookie;
   }
   else {
     /* Distributing requests in A/B testing style and
